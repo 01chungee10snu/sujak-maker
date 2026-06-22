@@ -180,17 +180,12 @@ body {
   border: 1px solid rgba(255,255,255,.08);
 }
 .chart-item.final { background: rgba(255,189,63,.14); border-color: rgba(255,189,63,.34); }
-.chart-item .dot {
+.chart-item .chart-orb {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 2px solid rgba(255,255,255,.2);
-  display: grid;
-  place-items: center;
-  font-weight: 900;
-  font-size: 14px;
-  color: white;
-  text-shadow: 0 1px 3px rgba(0,0,0,.55);
+  object-fit: cover;
+  display: block;
 }
 .chart-item strong { display: block; font-size: 12px; color: #fff; }
 .chart-item em { display: block; font-style: normal; font-size: 10px; color: var(--muted); margin-top: 2px; }

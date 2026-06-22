@@ -321,13 +321,28 @@ function updateNextPreview() {
   document.getElementById('next-preview').textContent = `${t.icon} ${t.name}`;
 }
 
+const ORB_ICONS = [
+  'assets/generated/components-orb/01-iron-ore-orb.png',
+  'assets/generated/components-orb/02-coal-orb.png',
+  'assets/generated/components-orb/03-coke-orb.png',
+  'assets/generated/components-orb/04-blast-furnace-orb.png',
+  'assets/generated/components-orb/05-pig-iron-ladle-orb.png',
+  'assets/generated/components-orb/06-steelmaking-converter-orb.png',
+  'assets/generated/components-orb/07-casting-slab-orb.png',
+  'assets/generated/components-orb/08-hot-rolled-coil-orb.png',
+  'assets/generated/components-orb/09-cold-rolled-auto-sheet-orb.png',
+  'assets/generated/components-orb/10-heavy-plate-orb.png',
+  'assets/generated/components-orb/11-long-special-products-orb.png',
+  'assets/generated/components-orb/12-yonggang-final-orb.png'
+];
+
 function renderEvolutionChart() {
   const container = document.getElementById('evolution-chart');
   container.innerHTML = '';
   TIERS.forEach((t, i) => {
     const item = document.createElement('div');
     item.className = `chart-item ${i === MAX_TIER ? 'final' : ''}`;
-    item.innerHTML = `<span class="dot" style="background:${t.color};border-color:${t.edge}">${t.icon}</span><div><strong>${t.name}</strong><em>${t.stage}</em></div>`;
+    item.innerHTML = `<img class="chart-orb" src="${ORB_ICONS[i]}" alt="${t.name}"><div><strong>${t.name}</strong><em>${t.stage}</em></div>`;
     container.appendChild(item);
   });
 }
