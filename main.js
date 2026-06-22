@@ -10,7 +10,6 @@ const CANVAS_H = 600;
 const WALL_THICKNESS = 20;
 const DROP_COOLDOWN = 400;
 const GAME_OVER_LINE = 80;
-const MAX_TIER = TIERS.length - 1;
 
 // ── Tiers (11 levels) ───────────────────────
 const TIERS = [
@@ -26,6 +25,8 @@ const TIERS = [
   { name: '강봉',   radius: 100, color: '#778899', edge: '#525e6b', score: 55 },
   { name: '용광로', radius: 120, color: '#ff4500', edge: '#cc3700', score: 100 },
 ];
+
+const MAX_TIER = TIERS.length - 1;
 
 // ── State ───────────────────────────────────
 let engine, world;
