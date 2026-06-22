@@ -54,6 +54,22 @@ window.YONGGANG_GAME_DATA = {
     { prompt: '안전만큼은 ____과 참여가 항상 참이에요.', answer: '참견', timeLimitSeconds: 6 },
     { prompt: '____, 우리 모두의 역할이에요.', answer: '솔선수범', timeLimitSeconds: 12 },
     { prompt: '과거 해오던 방식은 ____만 하세요.', answer: '참고', timeLimitSeconds: 6 },
-    { prompt: '새로운 접근은 ____의 시작이에요.', answer: '변화', timeLimitSeconds: 6 }
+    { prompt: '새로운 접근은 ____의 시작이에요.', answer: '변화', timeLimitSeconds: 6 },
+    { prompt: '안전은 선택이 아니라 ____입니다.', answer: '기본', timeLimitSeconds: 6 },
+    { prompt: '품질은 곧 ____입니다.', answer: '신뢰', timeLimitSeconds: 6 },
+    { prompt: '함께 ____하면 불가능은 없습니다.', answer: '도전', timeLimitSeconds: 6 },
+    { prompt: '소통이 ____을 만듭니다.', answer: '신뢰', timeLimitSeconds: 6 },
+    { prompt: '최선을 다하는 사람이 ____를 바꿉니다.', answer: '세상', timeLimitSeconds: 6 },
+    { prompt: '작은 개선이 큰 ____을 만듭니다.', answer: '혁신', timeLimitSeconds: 6 },
+    { prompt: '고객의 목소리에 ____하세요.', answer: '귀기울', timeLimitSeconds: 9 },
+    { prompt: '실천하는 ____만이 진짜입니다.', answer: '교육', timeLimitSeconds: 6 },
+    { prompt: '합리적인 결정은 ____에서 시작됩니다.', answer: '데이터', timeLimitSeconds: 9 },
+    { prompt: '함께 성장하는 것이 ____의 길입니다.', answer: '지속', timeLimitSeconds: 6 },
+    { prompt: '칭찬은 ____을 높이는 가장 쉬운 방법입니다.', answer: '사기', timeLimitSeconds: 6 },
+    { prompt: '책임감 있는 행동이 ____를 만듭니다.', answer: '조직', timeLimitSeconds: 6 },
+    { prompt: '장비 점검은 ____의 첫걸음입니다.', answer: '안전', timeLimitSeconds: 6 },
+    { prompt: '5S 활동은 ____ 관리의 기본입니다.', answer: '현장', timeLimitSeconds: 6 },
+    { prompt: '낭비를 없애는 것이 ____입니다.', answer: '효율', timeLimitSeconds: 6 },
+    { prompt: '한 번 더 ____하면 사고를 막을 수 있습니다.', answer: '확인', timeLimitSeconds: 9 }
   ]
 };

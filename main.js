@@ -222,15 +222,17 @@ function shouldTriggerRecipeQuiz() {
 
 function pickRecipeQuiz() {
   if (askedQuizIndexes.size >= RECIPE_QUIZZES.length) askedQuizIndexes.clear();
-  const start = mergeCount % RECIPE_QUIZZES.length;
-  for (let offset = 0; offset < RECIPE_QUIZZES.length; offset++) {
-    const index = (start + offset) % RECIPE_QUIZZES.length;
-    if (!askedQuizIndexes.has(index)) {
-      askedQuizIndexes.add(index);
-      return { ...RECIPE_QUIZZES[index], index };
-    }
+  const available = [];
+  for (let i = 0; i < RECIPE_QUIZZES.length; i++) {
+    if (!askedQuizIndexes.has(i)) available.push(i);
   }
-  return { ...RECIPE_QUIZZES[0], index: 0 };
+  if (available.length === 0) {
+    askedQuizIndexes.clear();
+    for (let i = 0; i < RECIPE_QUIZZES.length; i++) available.push(i);
+  }
+  const index = available[Math.floor(Math.random() * available.length)];
+  askedQuizIndexes.add(index);
+  return { ...RECIPE_QUIZZES[index], index };
 }
 
 function answerCharCount(answer) {
@@ -466,6 +468,17 @@ async function triggerGameOver(reason = 'overline') {
   document.getElementById('game-over-title').textContent = isQuizDead ? (RECIPE_RULE.failTitle || 'GAME OVER DEAD') : '공정 과밀';
   document.getElementById('game-over-message').textContent = isQuizDead ? (RECIPE_RULE.failMessage || '제철 레시피 입력퀴즈 실패.') : '용강까지 이어지는 흐름을 다시 설계하십시오.';
   document.getElementById('final-score').textContent = score.toLocaleString('ko-KR');
+  // 게임 오버 시 출제된 레시피 전체 문구 표시
+  const recipeEl = document.getElementById('game-over-recipe');
+  const recipeTextEl = document.getElementById('game-over-recipe-text');
+  if (isQuizDead && activeQuiz) {
+    const fullText = activeQuiz.prompt.replace(/_+/g, activeQuiz.answer);
+    recipeTextEl.textContent = fullText;
+    recipeEl.classList.remove('hidden');
+  } else {
+    recipeEl.classList.add('hidden');
+  }
+  activeQuiz = null;
   document.getElementById('game-over-overlay').classList.remove('hidden');
   const result = await recordGameResult();
   const el = document.getElementById('db-status');
