@@ -108,9 +108,163 @@ function init() {
       registerAndStart();
     });
 
+    // ── 사번 충돌 패널 이벤트 ──
+    setupConflictPanel_();
+
+    // ── 쿨다운 패널 이벤트 ──
+    const cooldownOk = document.getElementById('cooldown-ok');
+    if (cooldownOk) {
+      cooldownOk.addEventListener('click', () => {
+        document.getElementById('cooldown-panel').classList.add('hidden');
+        document.getElementById('landing-login').classList.remove('hidden');
+      });
+    }
+
     return;
   }
   startGameCore();
+}
+
+// ── 사번 충돌 & 쿨다운 처리 ──
+
+/** 충돌 패널 내 변수 */
+let conflictExistingNickname_ = '';
+let conflictInputNickname_ = '';
+
+function setupConflictPanel_() {
+  const panel = document.getElementById('conflict-panel');
+  if (!panel) return;
+
+  // 기존 닉네임으로 계속
+  const keepBtn = document.getElementById('conflict-keep');
+  if (keepBtn) {
+    keepBtn.addEventListener('click', async () => {
+      player.nickname = conflictExistingNickname_;
+      player.employeeId = player.employeeId;
+      panel.classList.add('hidden');
+      const btn = document.getElementById('login-submit');
+      if (btn) { btn.textContent = '등록 중...'; btn.disabled = true; }
+      await registerAndStart();
+    });
+  }
+
+  // 닉네임 변경 토글
+  const changeToggle = document.getElementById('conflict-change-toggle');
+  if (changeToggle) {
+    changeToggle.addEventListener('click', () => {
+      const box = document.getElementById('conflict-change-box');
+      box.classList.toggle('hidden');
+      if (!box.classList.contains('hidden')) {
+        document.getElementById('conflict-change-input').focus();
+      }
+    });
+  }
+
+  // 닉네임 변경 확정
+  const changeConfirm = document.getElementById('conflict-change-confirm');
+  if (changeConfirm) {
+    changeConfirm.addEventListener('click', async () => {
+      const newNick = document.getElementById('conflict-change-input').value.trim();
+      const errEl = document.getElementById('conflict-change-error');
+      if (!newNick) return;
+      changeConfirm.textContent = '처리 중...';
+      changeConfirm.disabled = true;
+      try {
+        const endpoint = GAME_DATA.googleSheets.endpoint;
+        const url = `${endpoint}?action=changeNickname&employeeId=${encodeURIComponent(player.employeeId)}&newNickname=${encodeURIComponent(newNick)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.status === 'ok') {
+          player.nickname = newNick;
+          player.highScore = data.highScore || 0;
+          player.isNew = false;
+          savePlayer();
+          // 닉네임 변경 완료 → 게임 시작
+          panel.classList.add('hidden');
+          started = true;
+          document.getElementById('start-overlay').classList.add('hidden');
+          gameStartScore = 0;
+          startGameCore();
+        } else {
+          errEl.textContent = data.message || '변경 실패';
+          errEl.classList.remove('hidden');
+          changeConfirm.textContent = '변경';
+          changeConfirm.disabled = false;
+        }
+      } catch (err) {
+        errEl.textContent = '네트워크 오류';
+        errEl.classList.remove('hidden');
+        changeConfirm.textContent = '변경';
+        changeConfirm.disabled = false;
+      }
+    });
+  }
+
+  // 삭제 토글
+  const delToggle = document.getElementById('conflict-delete-toggle');
+  if (delToggle) {
+    delToggle.addEventListener('click', () => {
+      const box = document.getElementById('conflict-delete-box');
+      box.classList.toggle('hidden');
+      if (!box.classList.contains('hidden')) {
+        document.getElementById('conflict-delete-input').focus();
+      }
+    });
+  }
+
+  // 삭제 확정
+  const delConfirm = document.getElementById('conflict-delete-confirm');
+  if (delConfirm) {
+    delConfirm.addEventListener('click', async () => {
+      const confirmNick = document.getElementById('conflict-delete-input').value.trim();
+      const errEl = document.getElementById('conflict-delete-error');
+      if (!confirmNick) return;
+      delConfirm.textContent = '처리 중...';
+      delConfirm.disabled = true;
+      try {
+        const endpoint = GAME_DATA.googleSheets.endpoint;
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'deletePlayer',
+            employeeId: player.employeeId,
+            confirmNickname: confirmNick
+          })
+        });
+        const data = await res.json();
+        if (data.status === 'ok') {
+          panel.classList.add('hidden');
+          const loginForm = document.getElementById('landing-login');
+          loginForm.classList.remove('hidden');
+          // 삭제 성공 → 신규 등록으로 진행
+          await registerAndStart();
+        } else {
+          errEl.textContent = data.message || '삭제 실패';
+          errEl.classList.remove('hidden');
+          delConfirm.textContent = '삭제 확정';
+          delConfirm.disabled = false;
+        }
+      } catch (err) {
+        errEl.textContent = '네트워크 오류';
+        errEl.classList.remove('hidden');
+        delConfirm.textContent = '삭제 확정';
+        delConfirm.disabled = false;
+      }
+    });
+  }
+
+  // 취소
+  const cancelBtn = document.getElementById('conflict-cancel');
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', () => {
+      panel.classList.add('hidden');
+      const loginForm = document.getElementById('landing-login');
+      loginForm.classList.remove('hidden');
+      const btn = document.getElementById('login-submit');
+      if (btn) { btn.textContent = '시작'; btn.disabled = false; }
+    });
+  }
 }
 
 function startGame() {
@@ -131,10 +285,35 @@ async function registerAndStart() {
       const url = `${endpoint}?action=register&nickname=${encodeURIComponent(player.nickname)}&employeeId=${encodeURIComponent(player.employeeId)}`;
       const res = await fetch(url);
       const data = await res.json();
+
       if (data.status === 'ok') {
         player.highScore = data.highScore || 0;
         player.isNew = !!data.isNew;
         savePlayer();
+      } else if (data.status === 'employeeIdConflict') {
+        // 사번 중복 + 닉네임 불일치 → 충돌 패널 표시
+        conflictExistingNickname_ = data.existingNickname || '';
+        conflictInputNickname_ = player.nickname;
+        if (loginForm) loginForm.classList.add('hidden');
+        const msg = document.getElementById('conflict-message');
+        if (msg) {
+          msg.textContent = '이 사번으로 등록된 닉네임 "' + data.existingNickname + '"이(가) 있습니다. 어떻게 진행하시겠습니까?';
+        }
+        document.getElementById('conflict-panel').classList.remove('hidden');
+        const btn = document.getElementById('login-submit');
+        if (btn) { btn.textContent = '시작'; btn.disabled = false; }
+        return; // 게임 시작 중단
+      } else if (data.status === 'cooldown') {
+        // 1시간 쿨다운
+        if (loginForm) loginForm.classList.add('hidden');
+        const cdMsg = document.getElementById('cooldown-message');
+        if (cdMsg) {
+          cdMsg.textContent = '마지막 플레이로부터 1시간이 경과하지 않았습니다. ' + data.remainingMinutes + '분 후 다시 플레이할 수 있습니다.';
+        }
+        document.getElementById('cooldown-panel').classList.remove('hidden');
+        const btn = document.getElementById('login-submit');
+        if (btn) { btn.textContent = '시작'; btn.disabled = false; }
+        return; // 게임 시작 중단
       } else {
         throw new Error(data.message || '등록 실패');
       }

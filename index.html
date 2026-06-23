@@ -40,6 +40,33 @@
         <p id="login-error" class="small error-text hidden"></p>
         <button id="login-submit" type="submit">시작</button>
       </form>
+      <!-- 사번 충돌 해결 패널 -->
+      <div id="conflict-panel" class="landing-rules hidden">
+        <h2>사번 중복</h2>
+        <p id="conflict-message" class="small"></p>
+        <button id="conflict-keep" type="button">기존 닉네임으로 계속</button>
+        <button id="conflict-change-toggle" type="button">닉네임 변경</button>
+        <div id="conflict-change-box" class="hidden">
+          <p class="small">새로 사용할 닉네임을 입력하세요.</p>
+          <input id="conflict-change-input" type="text" maxlength="20" autocomplete="off" placeholder="새 닉네임">
+          <button id="conflict-change-confirm" type="button">변경</button>
+          <p id="conflict-change-error" class="small error-text hidden"></p>
+        </div>
+        <button id="conflict-delete-toggle" type="button">기존 기록 삭제</button>
+        <div id="conflict-delete-box" class="hidden">
+          <p class="small">삭제하려면 기존 닉네임을 정확히 입력하세요.</p>
+          <input id="conflict-delete-input" type="text" maxlength="20" autocomplete="off" placeholder="기존 닉네임">
+          <button id="conflict-delete-confirm" type="button">삭제 확정</button>
+          <p id="conflict-delete-error" class="small error-text hidden"></p>
+        </div>
+        <button id="conflict-cancel" type="button">취소</button>
+      </div>
+      <!-- 쿨다운 메시지 -->
+      <div id="cooldown-panel" class="landing-rules hidden">
+        <h2>접속 제한</h2>
+        <p id="cooldown-message" class="small"></p>
+        <button id="cooldown-ok" type="button">확인</button>
+      </div>
     </div>
   </div>
   <section id="game-container" aria-label="용강 만들기 게임">
