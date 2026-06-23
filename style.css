@@ -17,9 +17,9 @@ body {
   font-family: Inter, 'Segoe UI', Apple SD Gothic Neo, system-ui, sans-serif;
   color: var(--text);
   background:
-    radial-gradient(1400px 900px at 10% -10%, #122d28 0%, transparent 55%),
-    radial-gradient(1100px 700px at 110% 10%, #0f2838 0%, transparent 50%),
-    linear-gradient(160deg, #08201d 0%, #0a2a23 42%, #081e2a 100%);
+    radial-gradient(900px 600px at 50% 0%, rgba(255,245,210,.25) 0%, transparent 60%),
+    url('assets/generated/backgrounds/steel-mill-background-bright.png') center / cover no-repeat fixed,
+    linear-gradient(160deg, #1a3a34 0%, #1e4a3e 50%, #1a3e4a 100%);
   background-attachment: fixed;
   -webkit-tap-highlight-color: transparent;
 }
@@ -39,7 +39,7 @@ body {
   gap: 10px;
   align-items: center;
   padding: 14px;
-  background: rgba(14, 38, 34, .88);
+  background: rgba(20, 50, 44, .82);
   border: 1px solid rgba(107, 226, 200, .18);
   border-bottom: none;
   border-radius: 20px 20px 0 0;
@@ -99,7 +99,7 @@ body {
   width: min(420px, 100%);
   height: auto;
   aspect-ratio: 420 / 640;
-  background: #0d2c28;
+  background: #16403a;
   border: 1px solid var(--line);
   border-top: none;
   border-radius: 0 0 20px 20px;
@@ -166,7 +166,7 @@ body {
 .small { color: var(--muted); margin-top: 8px; font-size: 13px; line-height: 1.45; }
 #flow-bar {
   padding: 10px 12px;
-  background: rgba(14, 38, 34, .88);
+  background: rgba(20, 50, 44, .82);
   border: 1px solid var(--line);
   border-top: none;
   border-radius: 0 0 20px 20px;

@@ -199,7 +199,7 @@ function loadImages() {
   images.sprites = new Image();
   images.sprites.src = withAssetVersion('assets/generated/value-chain-sprites.png');
   images.background = new Image();
-  images.background.src = withAssetVersion('assets/generated/factory-background.png');
+  images.background.src = withAssetVersion('assets/generated/factory-background-bright.png');
 }
 
 function withAssetVersion(path) {
@@ -848,13 +848,13 @@ function setupKeyboard() {
 function drawBackground() {
   if (images.background && images.background.complete && images.background.naturalWidth) {
     ctx.drawImage(images.background, 0, 0, CANVAS_W, CANVAS_H);
-    ctx.fillStyle = 'rgba(9, 18, 36, 0.42)';
+    ctx.fillStyle = 'rgba(12, 30, 40, 0.18)';
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
   } else {
     const grad = ctx.createLinearGradient(0, 0, 0, CANVAS_H);
-    grad.addColorStop(0, '#09172e');
-    grad.addColorStop(0.55, '#13294a');
-    grad.addColorStop(1, '#2e1d18');
+    grad.addColorStop(0, '#1a2e48');
+    grad.addColorStop(0.55, '#2a4470');
+    grad.addColorStop(1, '#4a3228');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
   }
