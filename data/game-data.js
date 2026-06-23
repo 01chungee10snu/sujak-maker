@@ -11,7 +11,7 @@ window.YONGGANG_GAME_DATA = {
     mode: 'web-app-or-local-fallback',
     spreadsheetId: '1bdcRVCFmTrgMUi-CFj28E-AknJjqb8HxHghfyU_XuB8',
     spreadsheetUrl: 'https://docs.google.com/spreadsheets/d/1bdcRVCFmTrgMUi-CFj28E-AknJjqb8HxHghfyU_XuB8/edit',
-    endpoint: 'https://script.google.com/macros/s/AKfycbwQB7ySsfp8FgtPr1EQHm3hrq7SztKUE3s6Z30RgkH8cNCREaOoUbhFXBYRsnQn75v4/exec',
+    endpoint: 'https://script.google.com/macros/s/AKfycbys1T0PPHSto6Bp7V0NbNn4ulFD7-LcM6ammbWvNzCADsoPPx0lzD5Mn_HpsnhRxDet/exec',
     schema: ['timestamp', 'nickname', 'employeeId', 'startScore', 'endScore', 'maxTier', 'durationMs', 'mergeCount', 'quizCorrectCount', 'quizFailReason']
   },
   scoring: {
