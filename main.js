@@ -179,6 +179,7 @@ function startGameCore() {
   renderTopTierBar();
   updateDbStatus();
   setupLiveUpdateCheck();
+  setupLeaderboard();
 
   document.getElementById('restart-btn').addEventListener('click', restart);
   requestAnimationFrame(gameLoop);
@@ -723,6 +724,7 @@ async function triggerGameOver(reason = 'overline') {
   const result = await recordGameResult();
   const el = document.getElementById('db-status');
   el.textContent = result.mode === 'sheets' ? 'Google Sheets 기록 요청 완료' : '결과를 로컬 저장소에 기록함';
+  fetchLeaderboard();
 }
 
 function restart() {
@@ -756,6 +758,64 @@ function restart() {
   const hsEl = document.getElementById('highscore-info');
   if (hsEl) hsEl.classList.add('hidden');
   gameStartScore = 0;
+}
+
+// ── 리더보드 ──
+let leaderboardCache = [];
+
+function setupLeaderboard() {
+  const btn = document.getElementById('leaderboard-btn');
+  const overlay = document.getElementById('leaderboard-overlay');
+  const closeBtn = document.getElementById('leaderboard-close');
+  if (btn) btn.addEventListener('click', () => { overlay.classList.remove('hidden'); fetchLeaderboard(); });
+  if (closeBtn) closeBtn.addEventListener('click', () => overlay.classList.add('hidden'));
+  fetchLeaderboard();
+}
+
+async function fetchLeaderboard() {
+  const endpoint = GAME_DATA.googleSheets.endpoint;
+  const list = document.getElementById('leaderboard-list');
+  const empty = document.getElementById('leaderboard-empty');
+  if (!endpoint || !list) return;
+
+  try {
+    const res = await fetch(`${endpoint}?action=leaderboard`);
+    const data = await res.json();
+    if (data.status !== 'ok') throw new Error('leaderboard fail');
+    leaderboardCache = data.leaderboard || [];
+    renderLeaderboard();
+  } catch (err) {
+    console.warn('리더보드 불러오기 실패', err);
+  }
+}
+
+function renderLeaderboard() {
+  const list = document.getElementById('leaderboard-list');
+  const empty = document.getElementById('leaderboard-empty');
+  if (!list) return;
+  list.innerHTML = '';
+
+  if (leaderboardCache.length === 0) {
+    if (empty) empty.classList.remove('hidden');
+    return;
+  }
+  if (empty) empty.classList.add('hidden');
+
+  for (const entry of leaderboardCache) {
+    const li = document.createElement('li');
+    if (entry.nickname === player.nickname && String(entry.employeeId) === String(player.employeeId)) {
+      li.classList.add('me');
+    }
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'lb-name';
+    nameSpan.textContent = entry.nickname;
+    const scoreSpan = document.createElement('span');
+    scoreSpan.className = 'lb-score';
+    scoreSpan.textContent = (entry.highScore || 0).toLocaleString('ko-KR');
+    li.appendChild(nameSpan);
+    li.appendChild(scoreSpan);
+    list.appendChild(li);
+  }
 }
 
 function setupInput() {
