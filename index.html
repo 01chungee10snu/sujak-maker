@@ -4,8 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="description" content="철광석에서 용강 생물까지 이어지는 제철 밸류체인 머지 게임">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%94%A5%3C/text%3E%3C/svg%3E">
 <title>용강 만들기</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=2.2.1-live-update">
 </head>
 <body>
 <main id="app-shell">
@@ -60,7 +64,7 @@
 
   <aside id="info-panel" aria-label="제철 밸류체인 정보">
     <section class="panel-card mascot-card">
-      <img src="assets/generated/yonggang-mascot.png" alt="최종 목표 캐릭터 용강" id="mascot-img">
+      <img src="assets/generated/yonggang-mascot.png?v=2.2.1-live-update" alt="최종 목표 캐릭터 용강" id="mascot-img">
       <div>
         <p class="label">FINAL LIFEFORM</p>
         <h2>용강</h2>
@@ -72,20 +76,24 @@
     </section>
     <section class="panel-card sprite-card">
       <p class="label">GPT IMAGE ASSET</p>
-      <img src="assets/generated/value-chain-sprites.png" alt="제철 밸류체인 오브젝트 스프라이트 시트">
+      <img src="assets/generated/value-chain-sprites.png?v=2.2.1-live-update" alt="제철 밸류체인 오브젝트 스프라이트 시트">
     </section>
     <section class="panel-card factory-card">
       <p class="label">STEEL MILL BACKDROP</p>
-      <img src="assets/generated/factory-background.png" alt="용강이 얼굴 모티프가 반영된 제철소 배경 이미지">
+      <img src="assets/generated/factory-background.png?v=2.2.1-live-update" alt="용강이 얼굴 모티프가 반영된 제철소 배경 이미지">
     </section>
     <section class="panel-card db-card">
       <p class="label">DATABASE</p>
       <p id="db-status">Google Sheets 어댑터 대기 중</p>
+      <p id="app-version-status" class="small">업데이트 확인 대기 중</p>
     </section>
   </aside>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
-<script src="data/game-data.js"></script>
-<script src="main.js"></script>
+<script>
+  window.YONGGANG_APP_VERSION_HINT = new URLSearchParams(window.location.search).get('v') || '2.2.1-live-update';
+  document.write(`<script src="data/game-data.js?v=${encodeURIComponent(window.YONGGANG_APP_VERSION_HINT)}"><\/script>`);
+  document.write(`<script src="main.js?v=${encodeURIComponent(window.YONGGANG_APP_VERSION_HINT)}"><\/script>`);
+</script>
 </body>
 </html>

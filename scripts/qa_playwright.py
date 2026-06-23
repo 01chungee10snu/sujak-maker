@@ -26,16 +26,21 @@ async def main():
         title = await page.locator('h1').inner_text()
         score = await page.locator('#score').inner_text()
         canvas_box = await page.locator('#game-canvas').bounding_box()
+        version_status = await page.locator('#app-version-status').inner_text()
+        app_version = await page.evaluate("() => window.YONGGANG_GAME_DATA.version")
+        if app_version not in version_status:
+            raise AssertionError(f'app version not shown: {app_version!r} not in {version_status!r}')
+        await expect(page.locator('#app-version-status')).to_contain_text('최신 데이터 적용됨')
         await page.screenshot(path=str(OUT / '01-load.png'), full_page=True)
 
         image_status = await page.evaluate("""
         () => Array.from(document.images).map(img => ({
-          src: img.getAttribute('src'), complete: img.complete,
+          src: img.getAttribute('src'), path: img.getAttribute('src')?.split('?')[0], complete: img.complete,
           naturalWidth: img.naturalWidth, naturalHeight: img.naturalHeight
         }))
         """)
         broken_images = [img for img in image_status if not img['complete'] or img['naturalWidth'] <= 0]
-        loaded_sources = {img['src'] for img in image_status}
+        loaded_sources = {img['path'] for img in image_status}
         expected_sources = {
             'assets/generated/yonggang-mascot.png',
             'assets/generated/value-chain-sprites.png',

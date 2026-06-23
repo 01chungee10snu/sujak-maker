@@ -9,6 +9,8 @@ const TIERS = GAME_DATA.tiers;
 const PHYSICS_RULE = GAME_DATA.physics || { renderScale: 1 };
 const RECIPE_QUIZZES = GAME_DATA.recipeQuizzes || [];
 const RECIPE_RULE = GAME_DATA.recipeQuiz || { triggerEveryMerges: 4, firstTriggerMerge: 3, secondsPerCharacter: 3, correctBonusPerCharacter: 100 };
+const APP_VERSION = GAME_DATA.version || 'unknown';
+const UPDATE_CHECK_INTERVAL_MS = 60_000;
 const MAX_TIER = TIERS.length - 1;
 const CANVAS_W = 420;
 const CANVAS_H = 640;
@@ -69,6 +71,7 @@ function init() {
   updateNextPreview();
   renderEvolutionChart();
   updateDbStatus();
+  setupLiveUpdateCheck();
 
   document.getElementById('restart-btn').addEventListener('click', restart);
   requestAnimationFrame(gameLoop);
@@ -84,11 +87,16 @@ function resizeCanvasForDpr() {
 
 function loadImages() {
   images.mascot = new Image();
-  images.mascot.src = 'assets/generated/yonggang-mascot.png';
+  images.mascot.src = withAssetVersion('assets/generated/yonggang-mascot.png');
   images.sprites = new Image();
-  images.sprites.src = 'assets/generated/value-chain-sprites.png';
+  images.sprites.src = withAssetVersion('assets/generated/value-chain-sprites.png');
   images.background = new Image();
-  images.background.src = 'assets/generated/factory-background.png';
+  images.background.src = withAssetVersion('assets/generated/factory-background.png');
+}
+
+function withAssetVersion(path) {
+  const separator = path.includes('?') ? '&' : '?';
+  return `${path}${separator}v=${encodeURIComponent(APP_VERSION)}`;
 }
 
 function pickRandomTier() {
@@ -344,7 +352,7 @@ function renderEvolutionChart() {
   TIERS.forEach((t, i) => {
     const item = document.createElement('div');
     item.className = `chart-item ${i === MAX_TIER ? 'final' : ''}`;
-    item.innerHTML = `<img class="chart-orb" src="${ORB_ICONS[i]}" alt="${t.name}"><div><strong>${t.name}</strong><em>${t.stage}</em></div>`;
+    item.innerHTML = `<img class="chart-orb" src="${withAssetVersion(ORB_ICONS[i])}" alt="${t.name}"><div><strong>${t.name}</strong><em>${t.stage}</em></div>`;
     container.appendChild(item);
   });
 }
@@ -353,6 +361,64 @@ function updateDbStatus() {
   const el = document.getElementById('db-status');
   const endpoint = GAME_DATA.googleSheets.endpoint;
   el.textContent = endpoint ? 'Google Sheets 연결 준비 완료' : '로컬 기록 우선, Sheets endpoint 주입 대기';
+  updateVersionStatus('최신 데이터 확인 중');
+}
+
+function updateVersionStatus(message) {
+  const el = document.getElementById('app-version-status');
+  if (!el) return;
+  el.textContent = `APP ${APP_VERSION} · ${message}`;
+}
+
+function extractDataVersion(scriptText) {
+  const match = scriptText.match(/version:\s*['"]([^'"]+)['"]/);
+  return match ? match[1] : '';
+}
+
+async function clearBrowserCaches() {
+  if ('serviceWorker' in navigator) {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(registrations.map((registration) => registration.unregister()));
+  }
+  if ('caches' in window) {
+    const keys = await caches.keys();
+    await Promise.all(keys.map((key) => caches.delete(key)));
+  }
+}
+
+function reloadWithFreshUrl(nextVersion) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('v', nextVersion);
+  url.searchParams.set('t', Date.now().toString());
+  window.location.replace(url.toString());
+}
+
+async function checkForAppUpdate() {
+  try {
+    const response = await fetch(`data/game-data.js?update-check=${Date.now()}`, {
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache' }
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const latestVersion = extractDataVersion(await response.text());
+    if (!latestVersion) throw new Error('version field not found');
+    if (latestVersion !== APP_VERSION) {
+      updateVersionStatus(`새 버전 ${latestVersion} 발견, 자동 갱신 중`);
+      await clearBrowserCaches();
+      reloadWithFreshUrl(latestVersion);
+      return;
+    }
+    updateVersionStatus('최신 데이터 적용됨');
+  } catch (error) {
+    console.warn('업데이트 확인 실패', error);
+    updateVersionStatus('업데이트 확인 실패, 다음 주기에 재시도');
+  }
+}
+
+function setupLiveUpdateCheck() {
+  updateVersionStatus('최신 데이터 확인 중');
+  checkForAppUpdate();
+  window.setInterval(checkForAppUpdate, UPDATE_CHECK_INTERVAL_MS);
 }
 
 async function recordGameResult() {
