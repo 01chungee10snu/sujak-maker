@@ -8,13 +8,13 @@
     "width": 420,
     "height": 640
   },
-  "wrongHelp": "정답 2글자 × 3초 = 6초",
+  "wrongHelp": "정답 4글자 × 3초 = 12초",
   "wrongTitle": "GAME OVER DEAD",
   "wrongMessage": "제철 레시피 입력퀴즈 실패. 같은 편의 안전·협업 레시피를 다시 익히십시오.",
-  "correctPrompt": "업무지시는 ____하게, 회의는 간결하게.",
-  "correctAnswer": "명확",
+  "correctPrompt": "문제 발생시 네 탓 보단 문제인식과 ____으로 함께 해결해요.",
+  "correctAnswer": "대안마련",
   "scoreBeforeCorrect": "0",
-  "scoreAfterCorrect": "200",
+  "scoreAfterCorrect": "400",
   "timeoutTitle": "GAME OVER DEAD",
   "imageStatus": [
     {
@@ -24,10 +24,82 @@
       "naturalHeight": 1024
     },
     {
+      "src": "assets/generated/components-orb/01-iron-ore-orb.png",
+      "complete": true,
+      "naturalWidth": 256,
+      "naturalHeight": 256
+    },
+    {
+      "src": "assets/generated/components-orb/02-coal-orb.png",
+      "complete": true,
+      "naturalWidth": 256,
+      "naturalHeight": 256
+    },
+    {
+      "src": "assets/generated/components-orb/03-coke-orb.png",
+      "complete": true,
+      "naturalWidth": 256,
+      "naturalHeight": 256
+    },
+    {
+      "src": "assets/generated/components-orb/04-blast-furnace-orb.png",
+      "complete": true,
+      "naturalWidth": 256,
+      "naturalHeight": 256
+    },
+    {
+      "src": "assets/generated/components-orb/05-pig-iron-ladle-orb.png",
+      "complete": true,
+      "naturalWidth": 256,
+      "naturalHeight": 256
+    },
+    {
+      "src": "assets/generated/components-orb/06-steelmaking-converter-orb.png",
+      "complete": true,
+      "naturalWidth": 256,
+      "naturalHeight": 256
+    },
+    {
+      "src": "assets/generated/components-orb/07-casting-slab-orb.png",
+      "complete": true,
+      "naturalWidth": 256,
+      "naturalHeight": 256
+    },
+    {
+      "src": "assets/generated/components-orb/08-hot-rolled-coil-orb.png",
+      "complete": true,
+      "naturalWidth": 256,
+      "naturalHeight": 256
+    },
+    {
+      "src": "assets/generated/components-orb/09-cold-rolled-auto-sheet-orb.png",
+      "complete": true,
+      "naturalWidth": 256,
+      "naturalHeight": 256
+    },
+    {
+      "src": "assets/generated/components-orb/10-heavy-plate-orb.png",
+      "complete": true,
+      "naturalWidth": 256,
+      "naturalHeight": 256
+    },
+    {
+      "src": "assets/generated/components-orb/11-long-special-products-orb.png",
+      "complete": true,
+      "naturalWidth": 256,
+      "naturalHeight": 256
+    },
+    {
+      "src": "assets/generated/components-orb/12-yonggang-final-orb.png",
+      "complete": true,
+      "naturalWidth": 256,
+      "naturalHeight": 256
+    },
+    {
       "src": "assets/generated/value-chain-sprites.png",
       "complete": true,
       "naturalWidth": 1024,
-      "naturalHeight": 576
+      "naturalHeight": 768
     },
     {
       "src": "assets/generated/factory-background.png",
