@@ -58,7 +58,7 @@ if (!Array.isArray(manifest.prompts) || manifest.prompts.length < 3) {
 }
 
 if (!Array.isArray(manifest.componentSources) || manifest.componentSources.length !== 12) {
-  failures.push('componentSources must contain 12 generated icon components');
+  failures.push('componentSources must contain 12 GPT-generated icon components');
 } else {
   for (const component of manifest.componentSources) {
     const abs = path.join(root, component.file);

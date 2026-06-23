@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-23T10:23:51+09:00",
-  "theme": "Bright eco-friendly Yonggang steel value-chain assets: clean low-carbon steel mill background plus 12 process/product icons rendered locally as fresh vector-style Pillow assets.",
-  "modelIntent": "Local deterministic Pillow vector rendering because remote GPT/FAL image generation was unavailable in this runtime.",
+  "generatedAt": "2026-06-23T06:00:02+09:00",
+  "theme": "Process-accurate Yonggang steel value chain icons: raw materials, coke, blast furnace, hot metal, BOF steelmaking, continuous casting, hot/cold rolled and representative steel products, final Yonggang from user reference image.",
+  "modelIntent": "GPT-image style high-quality game assets via Hermes image generation",
   "reference": "docs/references/yonggang-character-reference.jpg",
   "prompts": [
     "docs/asset-prompts/01-yonggang-mascot.md",
@@ -11,85 +11,84 @@
   "assets": [
     {
       "file": "assets/generated/yonggang-mascot.png",
-      "sourceUrl": "existing mascot asset",
+      "sourceUrl": "https://v3b.fal.media/files/b/0a9f503e/1v8Jd0ZKG8xIu94JCJfgd_TK19lsxS.png",
       "bytes": 593165
     },
     {
       "file": "assets/generated/value-chain-sprites.png",
-      "sourceUrl": "local-pillow-eco-refresh",
-      "bytes": 245666
+      "sourceUrl": "composited from process-accurate componentSources, final Yonggang uses user reference cutout",
+      "bytes": 653928
     },
     {
       "file": "assets/generated/factory-background.png",
-      "sourceUrl": "local-pillow-eco-refresh",
-      "bytes": 8358
+      "sourceUrl": "https://v3b.fal.media/files/b/0a9f5041/2XuMvA5Go_uM8IHTMZCDz_8DLLdhFX.png",
+      "bytes": 613452
     }
   ],
   "componentSources": [
     {
       "file": "assets/generated/components/01-iron-ore.png",
-      "sourceUrl": "local-pillow-eco-refresh: iron ore raw material",
-      "bytes": 20452
+      "sourceUrl": "https://v3b.fal.media/files/b/0a9f5cdc/gijxdgBh8w5piqd5UHFe9_dKLZfSmH.png",
+      "bytes": 709660
     },
     {
       "file": "assets/generated/components/02-coal.png",
-      "sourceUrl": "local-pillow-eco-refresh: coking coal raw material",
-      "bytes": 20794
+      "sourceUrl": "https://v3b.fal.media/files/b/0a9f5cdd/LIqGS59-l2iOZBNYZwVcJ_KjprP8NH.png",
+      "bytes": 537783
     },
     {
       "file": "assets/generated/components/03-coke.png",
-      "sourceUrl": "local-pillow-eco-refresh: porous coke fuel",
-      "bytes": 24391
+      "sourceUrl": "https://v3b.fal.media/files/b/0a9f5cdd/9QZq8RAwoQyG3yO5RE8lv_6Bfkfp3h.png",
+      "bytes": 613983
     },
     {
       "file": "assets/generated/components/04-blast-furnace.png",
-      "sourceUrl": "local-pillow-eco-refresh: blast furnace ironmaking",
-      "bytes": 18969
+      "sourceUrl": "https://v3b.fal.media/files/b/0a9f5ce7/lqDqI_3yC2zXmwsDmmnwE_MC5h0msA.png",
+      "bytes": 761205
     },
     {
       "file": "assets/generated/components/05-pig-iron-ladle.png",
-      "sourceUrl": "local-pillow-eco-refresh: hot metal ladle",
-      "bytes": 20041
+      "sourceUrl": "https://v3b.fal.media/files/b/0a9f5cdf/d9O_5w24VXEBENeuY1cS4_5ATydCLd.png",
+      "bytes": 925938
     },
     {
       "file": "assets/generated/components/06-steelmaking-converter.png",
-      "sourceUrl": "local-pillow-eco-refresh: basic oxygen furnace",
-      "bytes": 21851
+      "sourceUrl": "https://v3b.fal.media/files/b/0a9f5ce8/rHVVsy1mxWjuo-AfTGsXD_LGwIMVKV.png",
+      "bytes": 589365
     },
     {
       "file": "assets/generated/components/07-casting-slab.png",
-      "sourceUrl": "local-pillow-eco-refresh: continuous casting slab",
-      "bytes": 17259
+      "sourceUrl": "https://v3b.fal.media/files/b/0a9f5ce9/84GfxsnJQw6MJqnQ8VS6u_iXpnvO1a.png",
+      "bytes": 738049
     },
     {
       "file": "assets/generated/components/08-hot-rolled-coil.png",
-      "sourceUrl": "local-pillow-eco-refresh: hot rolled coil",
-      "bytes": 23939
+      "sourceUrl": "https://v3b.fal.media/files/b/0a9f5ce2/dT2StpaLxXn1sfblnexWX_JjS1qlkS.png",
+      "bytes": 793040
     },
     {
       "file": "assets/generated/components/09-cold-rolled-auto-sheet.png",
-      "sourceUrl": "local-pillow-eco-refresh: cold rolled galvanized auto sheet",
-      "bytes": 18469
+      "sourceUrl": "https://v3b.fal.media/files/b/0a9f5ce3/51CixK-FAvmibMkUYedVP_3YYREHNF.png",
+      "bytes": 728909
     },
     {
       "file": "assets/generated/components/10-heavy-plate.png",
-      "sourceUrl": "local-pillow-eco-refresh: heavy plate",
-      "bytes": 17968
+      "sourceUrl": "https://v3b.fal.media/files/b/0a9f5ce5/y2910wIiv-fGyEa4pz-_Q_Qhz4XYWQ.png",
+      "bytes": 537364
     },
     {
       "file": "assets/generated/components/11-long-special-products.png",
-      "sourceUrl": "local-pillow-eco-refresh: H-beam rebar rail long products",
-      "bytes": 18110
+      "sourceUrl": "https://v3b.fal.media/files/b/0a9f5ce5/iV_pBYuHniinBTicgNX7q_BTlyVw6o.png",
+      "bytes": 543403
     },
     {
       "file": "assets/generated/components/12-yonggang-final.png",
-      "sourceUrl": "local-pillow-eco-refresh: low carbon Yonggang final steel",
-      "bytes": 22047
+      "sourceUrl": "user-attached-reference-cutout: /Users/01chungee10/.hermes/profiles/img/image_cache/img_1b3cbe100ce7.jpg",
+      "bytes": 330748
     }
   ],
   "processBasis": [
-    "Blast furnace route: iron ore/coking coal/coke -> blast furnace hot metal -> BOF steelmaking -> continuous casting -> rolling/finishing.",
-    "Representative product families considered: hot rolled coil, cold rolled/galvanized automotive sheet, heavy plate, H-beam/rebar/rail long products, special/low-carbon steel.",
-    "Visual refresh uses bright daylight, greenery, solar/wind/hydrogen accents, and clean steelmaking cues to avoid dark/polluting background tone."
+    "Blast furnace route: iron ore/coke -> hot metal/pig iron -> basic oxygen furnace steelmaking -> continuous casting -> rolling/finishing.",
+    "Representative Hyundai Steel product families considered: hot rolled coil, cold rolled/galvanized automotive sheet, heavy plate, H-beam/rebar/rail long products, special steel."
   ]
 }

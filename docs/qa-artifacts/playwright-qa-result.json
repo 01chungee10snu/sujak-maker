@@ -8,13 +8,13 @@
     "width": 420,
     "height": 640
   },
-  "wrongHelp": "정답 4글자 × 3초 = 12초",
+  "wrongHelp": "정답 2글자 × 3초 = 6초",
   "wrongTitle": "GAME OVER DEAD",
   "wrongMessage": "제철 레시피 입력퀴즈 실패. 같은 편의 안전·협업 레시피를 다시 익히십시오.",
-  "correctPrompt": "근무는 유연하게. 업무는 ____하게 해내요.",
-  "correctAnswer": "확실",
+  "correctPrompt": "____, 우리 모두의 역할이에요.",
+  "correctAnswer": "솔선수범",
   "scoreBeforeCorrect": "0",
-  "scoreAfterCorrect": "200",
+  "scoreAfterCorrect": "400",
   "timeoutTitle": "GAME OVER DEAD",
   "imageStatus": [
     {

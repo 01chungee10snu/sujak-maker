@@ -48,7 +48,7 @@
 
 ## 점수 체계
 - 병합 점수 산식: `roundTo5((2 ** (tierIndex + 1)) * 10 * processMultiplier)`.
-- 티어별 점수: 철광석 20, 석탄 40, 코크스 90, 고로 제선 200, 용선 운반 430, 전로 제강 990, 연속주조 2,175, 열연코일 4,865, 냉연·차강판 10,750, 후판 24,575, 봉형·특수강 56,320, 용강 135,170.
+- 티어별 점수: 철광석 20, 석탄 40, 코크스 90, 제선공정 200, 쇳물 430, 제강공정 990, 연주·반제품 2,175, 열연강판 4,865, 형강·봉강 10,750, 특수강·내연 24,575, 자동차·가전·건물 56,320, 용강 135,170.
 - 제철레시피 정답 보너스: 정답 글자 수 × 100점.
 
 ## 데이터베이스
@@ -59,13 +59,11 @@
 - Sheets endpoint가 없을 때는 `localStorage.yonggang:lastResult`에 fallback 저장한다.
 
 ## 이미지 자산
-- 원격 이미지 생성이 현재 실행 환경에서 불가할 때도 재현 가능하도록 `scripts/regenerate-eco-assets.py`의 로컬 Pillow 벡터 렌더링으로 생성한다.
-- 기존 게임 호환 규격은 유지한다: 컴포넌트 1024×1024 RGBA, orb 256×256 RGBA, 스프라이트 1024×768 RGBA, 배경 576×1024 RGB.
+- GPT 이미지 생성 사용.
 - 생성 파일:
   - `assets/generated/yonggang-mascot.png`
-  - `assets/generated/value-chain-sprites.png` — 4×3 친환경 제철 공정·대표 제품 기반 스프라이트 시트
+  - `assets/generated/value-chain-sprites.png` — 4×3 공정 정확도 기반 스프라이트 시트
   - `assets/generated/components/01-iron-ore.png` ~ `assets/generated/components/12-yonggang-final.png` — 개별 티어 아이콘
-  - `assets/generated/components-orb/01-iron-ore-orb.png` ~ `assets/generated/components-orb/12-yonggang-final-orb.png` — 런타임에서 직접 로드하는 orb 아이콘
   - `assets/generated/factory-background.png`
 
 ## 검증 기준
