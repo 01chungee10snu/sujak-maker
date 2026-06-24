@@ -17,7 +17,7 @@ const CANVAS_H = 640;
 const WALL_THICKNESS = 24;
 const DROP_COOLDOWN = 360;
 const GAME_OVER_LINE = 92;
-const SAFE_OVER_FRAMES = 90;
+const SAFE_OVER_FRAMES = 120; // 실제 프레임 수 (≈2초)
 const DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
 
 let engine, world, canvas, ctx;
@@ -129,7 +129,6 @@ function init() {
 
 /** 충돌 패널 내 변수 */
 let conflictExistingNickname_ = '';
-let conflictInputNickname_ = '';
 
 function setupConflictPanel_() {
   const panel = document.getElementById('conflict-panel');
@@ -267,14 +266,6 @@ function setupConflictPanel_() {
   }
 }
 
-function startGame() {
-  if (started) return;
-  started = true;
-  document.getElementById('start-overlay').classList.add('hidden');
-  if (!initialized) init();
-  else startGameCore();
-}
-
 async function registerAndStart() {
   const endpoint = GAME_DATA.googleSheets.endpoint;
   const loginForm = document.getElementById('landing-login');
@@ -293,7 +284,6 @@ async function registerAndStart() {
       } else if (data.status === 'employeeIdConflict') {
         // 사번 중복 + 닉네임 불일치 → 충돌 패널 표시
         conflictExistingNickname_ = data.existingNickname || '';
-        conflictInputNickname_ = player.nickname;
         if (loginForm) loginForm.classList.add('hidden');
         const msg = document.getElementById('conflict-message');
         if (msg) {
@@ -516,15 +506,8 @@ function shouldTriggerRecipeQuiz() {
 }
 
 function pickRecipeQuiz() {
-  if (askedQuizIndexes.size >= RECIPE_QUIZZES.length) askedQuizIndexes.clear();
-  const available = [];
-  for (let i = 0; i < RECIPE_QUIZZES.length; i++) {
-    if (!askedQuizIndexes.has(i)) available.push(i);
-  }
-  if (available.length === 0) {
-    askedQuizIndexes.clear();
-    for (let i = 0; i < RECIPE_QUIZZES.length; i++) available.push(i);
-  }
+  let available = RECIPE_QUIZZES.map((_, i) => i).filter((i) => !askedQuizIndexes.has(i));
+  if (available.length === 0) { askedQuizIndexes.clear(); available = RECIPE_QUIZZES.map((_, i) => i); }
   const index = available[Math.floor(Math.random() * available.length)];
   askedQuizIndexes.add(index);
   return { ...RECIPE_QUIZZES[index], index };
@@ -627,14 +610,6 @@ function renderTopTierBar() {
     pip.className = `tier-pip ${i <= maxTierReached ? 'active' : ''}`;
     pip.title = TIERS[i].name;
     bar.appendChild(pip);
-  });
-}
-
-function setupInfoPanel() {
-  const btn = document.getElementById('info-btn');
-  if (!btn) return;
-  btn.addEventListener('click', () => {
-    // info panel removed; no-op until dedicated modal is added
   });
 }
 
@@ -775,13 +750,13 @@ async function recordGameResult() {
   if (!endpoint) return { mode: 'local', payload };
 
   try {
-    await fetch(endpoint, {
+    const res = await fetch(endpoint, {
       method: 'POST',
-      mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload)
     });
-    // no-cors 모드에서는 응답 본문을 읽을 수 없으므로 로컬 비교로 하이스코어 표시
+    const data = await res.json();
+    if (data.highScore !== undefined) player.highScore = data.highScore;
     showHighScoreInfo();
     return { mode: 'sheets', payload };
   } catch (error) {
@@ -861,7 +836,8 @@ function checkGameOver() {
   for (const body of bodies) {
     if (body.label !== 'part') continue;
     if (frameCount - body.spawnFrame < 120) continue;
-    if (Math.abs(body.velocity.y) > 0.22 || Math.abs(body.velocity.x) > 0.28) {
+    // Matter.js settling jitter(미세 진동)가 카운터를 무한 리셋하지 않도록 임계값 상향
+    if (Math.abs(body.velocity.y) > 1.2 || Math.abs(body.velocity.x) > 1.5) {
       overLineFrames.delete(body.id);
       continue;
     }
@@ -1193,42 +1169,6 @@ function drawGameOverLine() {
   ctx.restore();
 }
 
-function drawHBeam(r) {
-  ctx.beginPath();
-  ctx.rect(-r * 0.72, -r * 0.55, r * 0.26, r * 1.1);
-  ctx.rect(r * 0.46, -r * 0.55, r * 0.26, r * 1.1);
-  ctx.rect(-r * 0.54, -r * 0.16, r * 1.08, r * 0.32);
-  ctx.fill(); ctx.stroke();
-}
-
-function drawCity(r) {
-  roundRect(-r * 0.82, -r * 0.58, r * 1.64, r * 1.16, r * 0.18);
-  ctx.fill(); ctx.stroke();
-  ctx.fillStyle = 'rgba(255,255,255,.8)';
-  for (let i = -2; i <= 2; i++) ctx.fillRect(i * r * 0.26 - 3, -r * 0.25, 6, r * 0.45);
-}
-
-function drawStar(radius, points) {
-  ctx.beginPath();
-  for (let i = 0; i < points * 2; i++) {
-    const a = -Math.PI / 2 + i * Math.PI / points;
-    const rr = i % 2 === 0 ? radius : radius * 0.48;
-    const x = Math.cos(a) * rr;
-    const y = Math.sin(a) * rr;
-    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-  }
-  ctx.closePath();
-}
-
-function roundRect(x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
-}
 
 function lightenColor(hex, amount) {
   const num = parseInt(hex.slice(1), 16);
@@ -1249,7 +1189,7 @@ function gameLoop() {
   drawPreview();
   drawEffects();
   frameCount++;
-  if (frameCount % 20 === 0) checkGameOver();
+  checkGameOver(); // 매 프레임 감지
   requestAnimationFrame(gameLoop);
 }
 
