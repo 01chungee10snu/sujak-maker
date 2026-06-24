@@ -357,8 +357,6 @@ function startGameCore() {
 function resizeCanvasForDpr() {
   canvas.width = CANVAS_W * DPR;
   canvas.height = CANVAS_H * DPR;
-  canvas.style.width = `${CANVAS_W}px`;
-  canvas.style.height = `${CANVAS_H}px`;
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 }
 
@@ -919,7 +917,7 @@ function restart() {
 let leaderboardCache = [];
 
 function setupLeaderboard() {
-  const btn = document.getElementById('leaderboard-btn');
+  const btn = document.getElementById('leaderboard-btn-global');
   const overlay = document.getElementById('leaderboard-overlay');
   const closeBtn = document.getElementById('leaderboard-close');
   if (btn) btn.addEventListener('click', () => { overlay.classList.remove('hidden'); fetchLeaderboard(); });

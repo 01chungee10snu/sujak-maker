@@ -9,9 +9,11 @@
 <meta http-equiv="Expires" content="0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%94%A5%3C/text%3E%3C/svg%3E">
 <title>용강 만들기</title>
-<link rel="stylesheet" href="style.css?v=2.4.0-leaderboard">
+<link rel="stylesheet" href="style.css?v=2.5.0-layout">
 </head>
 <body>
+<!-- 🏆 리더보드: 런칭/쿨다운/게임오버 모든 상태에서 접근 가능 -->
+<button id="leaderboard-btn-global" class="icon-btn" aria-label="랭킹" style="position:fixed;top:16px;right:16px;z-index:65;width:36px;height:36px;">🏆</button>
 <main id="app-shell">
   <div id="start-overlay" class="overlay">
     <div class="landing">
@@ -84,7 +86,6 @@
         <span id="next-preview"></span>
       </div>
       <div id="header-right">
-        <button id="leaderboard-btn" class="icon-btn" aria-label="랭킹">🏆</button>
         <button id="info-btn" class="icon-btn" aria-label="정보">i</button>
       </div>
     </header>
@@ -120,15 +121,16 @@
           <button id="restart-btn">다시 시작</button>
         </div>
       </div>
-      <div id="leaderboard-overlay" class="hidden">
-        <div class="leaderboard-content">
-          <div class="leaderboard-head">
-            <h2>🏆 랭킹</h2>
-            <button id="leaderboard-close" class="icon-btn" aria-label="닫기">✕</button>
-          </div>
-          <ol id="leaderboard-list"></ol>
-          <p id="leaderboard-empty" class="small hidden">기록이 없습니다.</p>
+    </div>
+    <!-- 리더보드 오버레이: 전체 화면 -->
+    <div id="leaderboard-overlay" class="hidden">
+      <div class="leaderboard-content">
+        <div class="leaderboard-head">
+          <h2>🏆 랭킹</h2>
+          <button id="leaderboard-close" class="icon-btn" aria-label="닫기">✕</button>
         </div>
+        <ol id="leaderboard-list"></ol>
+        <p id="leaderboard-empty" class="small hidden">기록이 없습니다.</p>
       </div>
     </div>
     <div id="flow-bar">
