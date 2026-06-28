@@ -7,6 +7,7 @@ const { Engine, World, Bodies, Body, Events, Composite, Vector } = Matter;
 const GAME_DATA = window.YONGGANG_GAME_DATA;
 const TIERS = GAME_DATA.tiers;
 const PHYSICS_RULE = GAME_DATA.physics || { renderScale: 1 };
+const PHYSICS_CONFIG = buildPhysicsConfig(PHYSICS_RULE);
 const RECIPE_QUIZZES = GAME_DATA.recipeQuizzes || [];
 const RECIPE_RULE = GAME_DATA.recipeQuiz || { triggerEveryMerges: 4, firstTriggerMerge: 3, secondsPerCharacter: 3, correctBonusPerCharacter: 100 };
 const APP_VERSION = GAME_DATA.version || 'unknown';
@@ -15,9 +16,9 @@ const MAX_TIER = TIERS.length - 1;
 const CANVAS_W = 420;
 const CANVAS_H = 640;
 const WALL_THICKNESS = 24;
-const DROP_COOLDOWN = 360;
-const GAME_OVER_LINE = 92;
-const SAFE_OVER_FRAMES = 120; // 실제 프레임 수 (≈2초)
+const DROP_COOLDOWN = PHYSICS_CONFIG.drop.cooldownMs;
+const GAME_OVER_LINE = PHYSICS_CONFIG.gameOver.lineY;
+const SAFE_OVER_FRAMES = PHYSICS_CONFIG.gameOver.settleFrames;
 const DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
 
 let engine, world, canvas, ctx;
@@ -29,7 +30,7 @@ let nextTier = 0;
 let canDrop = true;
 let gameOver = false;
 let mouseX = CANVAS_W / 2;
-let dropLineY = 58;
+let dropLineY = PHYSICS_CONFIG.drop.lineY;
 let initialized = false;
 let started = false;
 let frameCount = 0;
@@ -48,6 +49,71 @@ const images = {};
 // ── 플레이어 정보 ──
 let player = { nickname: '', employeeId: '', highScore: 0, isNew: false };
 let gameStartScore = 0;
+
+function buildPhysicsConfig(raw = {}) {
+  return {
+    renderScale: raw.renderScale || 1,
+    engine: {
+      enableSleeping: raw.engine?.enableSleeping ?? true,
+      gravityY: raw.engine?.gravityY ?? 1.04,
+      positionIterations: raw.engine?.positionIterations ?? 12,
+      velocityIterations: raw.engine?.velocityIterations ?? 10,
+      constraintIterations: raw.engine?.constraintIterations ?? 4
+    },
+    body: {
+      frictionStatic: raw.body?.frictionStatic ?? 0.88,
+      frictionAirBase: raw.body?.frictionAirBase ?? 0.012,
+      frictionAirRadiusFactor: raw.body?.frictionAirRadiusFactor ?? 0.000035,
+      slop: raw.body?.slop ?? 0.012,
+      angularVelocityJitter: raw.body?.angularVelocityJitter ?? 0.024
+    },
+    drop: {
+      cooldownMs: raw.drop?.cooldownMs ?? 420,
+      lineY: raw.drop?.lineY ?? 58,
+      initialVelocityY: raw.drop?.initialVelocityY ?? 0.82,
+      randomVelocityX: raw.drop?.randomVelocityX ?? 0.16
+    },
+    merge: {
+      velocityCarry: raw.merge?.velocityCarry ?? 0.26,
+      upwardForcePerMass: raw.merge?.upwardForcePerMass ?? 0.012,
+      maxUpwardForce: raw.merge?.maxUpwardForce ?? 1.05,
+      popFrames: raw.merge?.popFrames ?? 16
+    },
+    gameOver: {
+      lineY: raw.gameOver?.lineY ?? 92,
+      spawnGraceFrames: raw.gameOver?.spawnGraceFrames ?? 150,
+      settleFrames: raw.gameOver?.settleFrames ?? 150,
+      maxSettledVelocityX: raw.gameOver?.maxSettledVelocityX ?? 0.85,
+      maxSettledVelocityY: raw.gameOver?.maxSettledVelocityY ?? 0.85
+    }
+  };
+}
+
+function getTierFrictionAir(tier) {
+  return PHYSICS_CONFIG.body.frictionAirBase + tier.radius * PHYSICS_CONFIG.body.frictionAirRadiusFactor;
+}
+
+function getMergeVelocity(a, b) {
+  return Vector.mult(Vector.add(a.velocity, b.velocity), PHYSICS_CONFIG.merge.velocityCarry);
+}
+
+function getMergeLiftForce(mass) {
+  const magnitude = Math.min(mass * PHYSICS_CONFIG.merge.upwardForcePerMass, PHYSICS_CONFIG.merge.maxUpwardForce);
+  return { x: 0, y: -magnitude };
+}
+
+function isBodySettledForGameOver(body, currentFrame = frameCount) {
+  const spawnFrame = Number.isFinite(body.spawnFrame) ? body.spawnFrame : 0;
+  if (currentFrame - spawnFrame < PHYSICS_CONFIG.gameOver.spawnGraceFrames) return false;
+  if (
+    Math.abs(body.velocity.y) > PHYSICS_CONFIG.gameOver.maxSettledVelocityY ||
+    Math.abs(body.velocity.x) > PHYSICS_CONFIG.gameOver.maxSettledVelocityX
+  ) {
+    return false;
+  }
+  const radius = body.collisionRadius || TIERS[body.tier]?.radius || 0;
+  return body.position.y - radius < PHYSICS_CONFIG.gameOver.lineY;
+}
 
 function loadStoredPlayer() {
   try {
@@ -328,11 +394,11 @@ function startGameCore() {
   resizeCanvasForDpr();
   loadImages();
 
-  engine = Engine.create({ enableSleeping: true });
-  engine.gravity.y = 1.08;
-  engine.positionIterations = 10;
-  engine.velocityIterations = 8;
-  engine.constraintIterations = 4;
+  engine = Engine.create({ enableSleeping: PHYSICS_CONFIG.engine.enableSleeping });
+  engine.gravity.y = PHYSICS_CONFIG.engine.gravityY;
+  engine.positionIterations = PHYSICS_CONFIG.engine.positionIterations;
+  engine.velocityIterations = PHYSICS_CONFIG.engine.velocityIterations;
+  engine.constraintIterations = PHYSICS_CONFIG.engine.constraintIterations;
   world = engine.world;
 
   createWalls();
@@ -400,19 +466,19 @@ function createPart(x, y, tierIndex, extra = {}) {
   const body = Bodies.circle(x, y, collisionRadius, {
     restitution: tier.restitution,
     friction: tier.friction,
-    frictionStatic: 0.82,
-    frictionAir: 0.012,
+    frictionStatic: PHYSICS_CONFIG.body.frictionStatic,
+    frictionAir: getTierFrictionAir(tier),
     density: tier.density,
-    slop: 0.015,
+    slop: PHYSICS_CONFIG.body.slop,
     label: 'part',
     tier: tierIndex,
     collisionRadius,
-    renderRadius: collisionRadius * (PHYSICS_RULE.renderScale || 1),
+    renderRadius: collisionRadius * PHYSICS_CONFIG.renderScale,
     spawnFrame: frameCount,
     justMerged: extra.justMerged || 0,
     renderAngle: Math.random() * Math.PI * 2
   });
-  Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.04);
+  Body.setAngularVelocity(body, (Math.random() - 0.5) * PHYSICS_CONFIG.body.angularVelocityJitter);
   return body;
 }
 
@@ -439,7 +505,10 @@ function dropItem() {
   const tier = TIERS[currentTier];
   const x = clamp(mouseX, WALL_THICKNESS + tier.radius, CANVAS_W - WALL_THICKNESS - tier.radius);
   const body = createPart(x, dropLineY, currentTier);
-  Body.setVelocity(body, { x: (Math.random() - 0.5) * 0.25, y: 1.0 });
+  Body.setVelocity(body, {
+    x: (Math.random() - 0.5) * PHYSICS_CONFIG.drop.randomVelocityX,
+    y: PHYSICS_CONFIG.drop.initialVelocityY
+  });
   World.add(world, body);
 
   canDrop = false;
@@ -470,12 +539,12 @@ function mergeParts(a, b) {
   const newTier = a.tier + 1;
   const tierData = TIERS[newTier];
   const mid = Vector.mult(Vector.add(a.position, b.position), 0.5);
-  const velocity = Vector.mult(Vector.add(a.velocity, b.velocity), 0.35);
+  const velocity = getMergeVelocity(a, b);
 
   World.remove(world, [a, b]);
-  const newBody = createPart(mid.x, mid.y, newTier, { justMerged: 18 });
+  const newBody = createPart(mid.x, mid.y, newTier, { justMerged: PHYSICS_CONFIG.merge.popFrames });
   Body.setVelocity(newBody, velocity);
-  Body.applyForce(newBody, newBody.position, { x: 0, y: -0.018 * newBody.mass });
+  Body.applyForce(newBody, newBody.position, getMergeLiftForce(newBody.mass));
   World.add(world, newBody);
 
   score += tierData.score;
@@ -833,14 +902,7 @@ function checkGameOver() {
   const bodies = Composite.allBodies(world);
   for (const body of bodies) {
     if (body.label !== 'part') continue;
-    if (frameCount - body.spawnFrame < 120) continue;
-    // Matter.js settling jitter(미세 진동)가 카운터를 무한 리셋하지 않도록 임계값 상향
-    if (Math.abs(body.velocity.y) > 1.2 || Math.abs(body.velocity.x) > 1.5) {
-      overLineFrames.delete(body.id);
-      continue;
-    }
-    const over = body.position.y - (body.collisionRadius || TIERS[body.tier].radius) < GAME_OVER_LINE;
-    if (!over) {
+    if (!isBodySettledForGameOver(body)) {
       overLineFrames.delete(body.id);
       continue;
     }

@@ -1,10 +1,43 @@
 window.YONGGANG_GAME_DATA = {
   name: '용강 만들기',
-  version: '2.5.0-layout',
+  version: '2.6.0-physics',
   physics: {
     radiusPolicy: 'strictly-increasing-tier-radius',
     massPolicy: 'strictly-increasing-nominal-mass',
     renderScale: 1,
+    engine: {
+      enableSleeping: true,
+      gravityY: 1.04,
+      positionIterations: 12,
+      velocityIterations: 10,
+      constraintIterations: 4
+    },
+    body: {
+      frictionStatic: 0.88,
+      frictionAirBase: 0.012,
+      frictionAirRadiusFactor: 0.000035,
+      slop: 0.012,
+      angularVelocityJitter: 0.024
+    },
+    drop: {
+      cooldownMs: 420,
+      lineY: 58,
+      initialVelocityY: 0.82,
+      randomVelocityX: 0.16
+    },
+    merge: {
+      velocityCarry: 0.26,
+      upwardForcePerMass: 0.012,
+      maxUpwardForce: 1.05,
+      popFrames: 16
+    },
+    gameOver: {
+      lineY: 92,
+      spawnGraceFrames: 150,
+      settleFrames: 150,
+      maxSettledVelocityX: 0.85,
+      maxSettledVelocityY: 0.85
+    },
     note: '각 티어의 radius를 Matter.js 원형 충돌 반경과 캔버스 스프라이트 표시 반경의 단일 기준으로 사용하며, radius² × density 기준 명목 질량도 티어 순서대로 증가한다.'
   },
   googleSheets: {
